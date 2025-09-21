@@ -1,0 +1,127 @@
+{
+  "name": "CD-KEY - Polkadot Hackathon",
+  "description": "Un CD-KEY digital que representa tu membresía exclusiva en la DAO y te otorga acceso privilegiado a nuestra plataforma de testing y insights alfa. Este NFT no es solo una pieza de arte digital, sino una llave que abre las puertas a una comunidad de desarrolladores, innovadores y visionarios que están construyendo el futuro de la tecnología blockchain.\n\nAl poseer este CD-KEY, te conviertes en parte de un ecosistema selecto que tiene acceso anticipado a nuevas funcionalidades, herramientas de desarrollo en fase beta, y la capacidad de influir directamente en las decisiones de gobernanza de la DAO. Cada CD-KEY es único y representa tu voz en la comunidad.\n\nLa plataforma de testing te permitirá experimentar con las últimas innovaciones antes de que lleguen al público general, mientras que los insights alfa te mantendrán informado sobre las tendencias emergentes, análisis de mercado exclusivos, y oportunidades de inversión que otros no pueden ver.\n\nEste es más que un NFT - es tu identidad digital dentro de una revolución tecnológica.",
+  "image": "https://baeza.me/static/nft/polka/image.png",
+  "external_url": "https://baeza.me",
+  "attributes": [
+    {
+      "trait_type": "Tipo de Acceso",
+      "value": "DAO Governance Premium"
+    },
+    {
+      "trait_type": "Nivel de Membresía",
+      "value": "Alpha Insider"
+    },
+    {
+      "trait_type": "Plataforma de Testing",
+      "value": "Acceso Completo"
+    },
+    {
+      "trait_type": "Insights Exclusivos",
+      "value": "Nivel Alfa"
+    },
+    {
+      "trait_type": "Poder de Votación",
+      "value": "5x Multiplier"
+    },
+    {
+      "trait_type": "Acceso a Beta Features",
+      "value": "Tiempo Real"
+    },
+    {
+      "trait_type": "Comunidad Privada",
+      "value": "Discord VIP"
+    },
+    {
+      "trait_type": "Análisis de Mercado",
+      "value": "Diario Premium"
+    },
+    {
+      "trait_type": "Soporte Técnico",
+      "value": "Prioridad Alta"
+    },
+    {
+      "trait_type": "Eventos Exclusivos",
+      "value": "Acceso Garantizado"
+    },
+    {
+      "trait_type": "Rareza",
+      "value": "Legendario"
+    },
+    {
+      "trait_type": "Generación",
+      "value": "Genesis"
+    },
+    {
+      "trait_type": "Red",
+      "value": "PolkaDot"
+    },
+    {
+      "trait_type": "Versión",
+      "value": "1.0.0"
+    }
+  ],
+  "properties": {
+    "governance_access": {
+      "description": "Acceso completo a las funciones de gobernanza de la DAO con poder de voto amplificado",
+      "features": [
+        "Votación en propuestas de protocolo",
+        "Creación de propuestas comunitarias",
+        "Acceso a foros de discusión privados",
+        "Participación en comités de desarrollo"
+      ]
+    },
+    "testing_platform": {
+      "description": "Acceso exclusivo a la plataforma de testing con herramientas de desarrollo avanzadas",
+      "features": [
+        "Deploy de contratos en testnet privada",
+        "Herramientas de debugging avanzadas",
+        "Métricas de rendimiento en tiempo real",
+        "Sandbox de pruebas ilimitado"
+      ]
+    },
+    "alpha_insights": {
+      "description": "Información privilegiada y análisis de mercado exclusivos",
+      "features": [
+        "Reportes diarios de tendencias",
+        "Análisis técnico avanzado",
+        "Alertas de oportunidades de trading",
+        "Insights de desarrollo de protocolos"
+      ]
+    },
+    "community_benefits": {
+      "description": "Beneficios exclusivos dentro de la comunidad",
+      "features": [
+        "Acceso a Discord VIP",
+        "Participación en AMAs exclusivos",
+        "Networking con otros holders",
+        "Mentoría de desarrolladores senior"
+      ]
+    }
+  },
+  "background_color": "1a1a1a",
+  "collection": {
+    "name": "CD-KEY NFT Collection Polkadot Hackathon",
+    "family": "Baeza.me Ecosystem Polkadot Hackathon"
+  },
+  "creator": {
+    "name": "Carlos Baeza",
+    "url": "https://baeza.me",
+    "twitter": "@cjbazilla",
+    "github": "cjbaezilla"
+  },
+  "beneficiary": {
+    "address": "0xaEeaA55ED4f7df9E4C5688011cEd1E2A1b696772",
+    "name": "Carlos Baeza"
+  },
+  "unlockable_content": {
+    "description": "Contenido desbloqueable para holders",
+    "access": "Solo para poseedores verificados del CD-KEY",
+    "content": [
+      "Documentación técnica avanzada",
+      "Scripts de automatización",
+      "Templates de contratos inteligentes",
+      "Guías de integración paso a paso"
+    ]
+  }
+}
