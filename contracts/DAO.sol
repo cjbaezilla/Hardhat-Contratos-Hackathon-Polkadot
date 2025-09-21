@@ -35,7 +35,7 @@ contract DAO is Ownable {
 
     IERC721 public nftContract;
     uint256 public proposalCount;
-    uint256 public MIN_PROPOSAL_VOTES = 10;
+    uint256 public MIN_PROPOSAL_CREATION_TOKENS = 10;
     uint256 public MIN_VOTES_TO_APPROVE = 10;
     uint256 public MIN_TOKENS_TO_APPROVE = 50;
     
@@ -73,7 +73,7 @@ contract DAO is Ownable {
 
     function createProposal(string calldata username, string calldata description, string calldata link, uint256 startTime, uint256 endTime) external {
         uint256 nftBalance = nftContract.balanceOf(msg.sender);
-        require(nftBalance >= MIN_PROPOSAL_VOTES, "Necesitas al menos 10 NFTs para crear propuesta");
+        require(nftBalance >= MIN_PROPOSAL_CREATION_TOKENS, "Necesitas al menos 10 NFTs para crear propuesta");
         
         require(
             block.timestamp >= lastProposalTime[msg.sender] + 1 days,
@@ -186,11 +186,11 @@ contract DAO is Ownable {
         emit NFTContractUpdated(oldContract, _newNftContract);
     }
     
-    function updateMinProposalVotes(uint256 _newMinProposalVotes) external onlyOwner {
+    function updateCreationMinProposalTokens(uint256 _newMinProposalVotes) external onlyOwner {
         require(_newMinProposalVotes > 0, "Valor debe ser mayor a 0");
         
-        uint256 oldValue = MIN_PROPOSAL_VOTES;
-        MIN_PROPOSAL_VOTES = _newMinProposalVotes;
+        uint256 oldValue = MIN_PROPOSAL_CREATION_TOKENS;
+        MIN_PROPOSAL_CREATION_TOKENS = _newMinProposalVotes;
         
         emit MinProposalVotesUpdated(oldValue, _newMinProposalVotes);
     }

@@ -25,6 +25,7 @@ contract SimpleNFT is ERC721 {
     string private _baseTokenURI;
     address private _deployer;
     address[] public nftHolders;
+    mapping(address => bool) private _isHolder;
     
     event TokenMinted(address indexed to, uint256 indexed tokenId, uint256 price);
     
@@ -46,7 +47,11 @@ contract SimpleNFT is ERC721 {
         }
         
         _safeMint(msg.sender, tokenId);
-        nftHolders.push(msg.sender);
+        
+        if (!_isHolder[msg.sender]) {
+            nftHolders.push(msg.sender);
+            _isHolder[msg.sender] = true;
+        }
         
         payable(_deployer).transfer(msg.value);
         
@@ -64,9 +69,14 @@ contract SimpleNFT is ERC721 {
             _nextTokenId += quantity;
         }
         
+        bool isNewHolder = !_isHolder[msg.sender];
+        if (isNewHolder) {
+            nftHolders.push(msg.sender);
+            _isHolder[msg.sender] = true;
+        }
+        
         for (uint256 i = 0; i < quantity; i++) {
             _safeMint(msg.sender, startTokenId + i);
-            nftHolders.push(msg.sender);
             emit TokenMinted(msg.sender, startTokenId + i, MINT_PRICE);
         }
         
@@ -105,5 +115,9 @@ contract SimpleNFT is ERC721 {
     
     function getMintPrice() public pure returns (uint256) {
         return MINT_PRICE;
+    }
+    
+    function getAllNftHolders() public view returns (address[] memory) {
+        return nftHolders;
     }
 }
