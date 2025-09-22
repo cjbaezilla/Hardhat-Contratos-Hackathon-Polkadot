@@ -8,20 +8,27 @@ async function main() {
   console.log("📝 Desplegando con la cuenta:", deployer.address);
   console.log("💰 Balance de la cuenta:", ethers.formatEther(await ethers.provider.getBalance(deployer.address)), "ETH");
 
-  // Configuración del contrato DAO
   const contractName = "DAO";
   
   const nftContractAddress: string = "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e";
+  const minProposalCreationTokens: number = 10;
+  const minVotesToApprove: number = 10;
+  const minTokensToApprove: number = 50;
 
   console.log("\n⏳ Desplegando contrato DAO...");
   console.log("📋 Parámetros del contrato DAO:");
   console.log("   - Contrato NFT:", nftContractAddress);
-  console.log("   - Tokens mínimos para crear propuesta:", 10);
-  console.log("   - Votos mínimos para aprobar:", 10);
-  console.log("   - Tokens mínimos para aprobar:", 50);
+  console.log("   - Tokens mínimos para crear propuesta:", minProposalCreationTokens);
+  console.log("   - Votos mínimos para aprobar:", minVotesToApprove);
+  console.log("   - Tokens mínimos para aprobar:", minTokensToApprove);
 
   const DAOFactory = await ethers.getContractFactory(contractName);
-  const dao = await DAOFactory.deploy(nftContractAddress);
+  const dao = await DAOFactory.deploy(
+    nftContractAddress,
+    minProposalCreationTokens,
+    minVotesToApprove,
+    minTokensToApprove
+  );
   
   await dao.waitForDeployment();
   const daoAddress = await dao.getAddress();
@@ -45,7 +52,10 @@ async function main() {
     network: "polkadotHubTestnet",
     timestamp: new Date().toISOString(),
     constructorArgs: {
-      nftContract: nftContractAddress
+      nftContract: nftContractAddress,
+      minProposalCreationTokens: minProposalCreationTokens,
+      minVotesToApprove: minVotesToApprove,
+      minTokensToApprove: minTokensToApprove
     },
     nftContract: {
       address: nftContractAddress,

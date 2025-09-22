@@ -23,7 +23,6 @@ contract DAO is Ownable {
     struct Proposal {
         uint256 id;
         address proposer;
-        string username;
         string description;
         string link;
         uint256 votesFor;
@@ -35,9 +34,9 @@ contract DAO is Ownable {
 
     IERC721 public nftContract;
     uint256 public proposalCount;
-    uint256 public MIN_PROPOSAL_CREATION_TOKENS = 10;
-    uint256 public MIN_VOTES_TO_APPROVE = 10;
-    uint256 public MIN_TOKENS_TO_APPROVE = 50;
+    uint256 public MIN_PROPOSAL_CREATION_TOKENS;
+    uint256 public MIN_VOTES_TO_APPROVE;
+    uint256 public MIN_TOKENS_TO_APPROVE;
     
     mapping(uint256 => Proposal) public proposals;
     mapping(uint256 => mapping(address => bool)) public hasVoted;
@@ -67,11 +66,19 @@ contract DAO is Ownable {
     event MinVotesToApproveUpdated(uint256 indexed oldValue, uint256 indexed newValue);
     event MinTokensToApproveUpdated(uint256 indexed oldValue, uint256 indexed newValue);
 
-    constructor(address _nftContract) Ownable(msg.sender) {
+    constructor(
+        address _nftContract,
+        uint256 _minProposalCreationTokens,
+        uint256 _minVotesToApprove,
+        uint256 _minTokensToApprove
+    ) Ownable(msg.sender) {
         nftContract = IERC721(_nftContract);
+        MIN_PROPOSAL_CREATION_TOKENS = _minProposalCreationTokens;
+        MIN_VOTES_TO_APPROVE = _minVotesToApprove;
+        MIN_TOKENS_TO_APPROVE = _minTokensToApprove;
     }
 
-    function createProposal(string calldata username, string calldata description, string calldata link, uint256 startTime, uint256 endTime) external {
+    function createProposal(string calldata description, string calldata link, uint256 startTime, uint256 endTime) external {
         uint256 nftBalance = nftContract.balanceOf(msg.sender);
         require(nftBalance >= MIN_PROPOSAL_CREATION_TOKENS, "Necesitas al menos 10 NFTs para crear propuesta");
         
@@ -88,7 +95,6 @@ contract DAO is Ownable {
         proposals[proposalId] = Proposal({
             id: proposalId,
             proposer: msg.sender,
-            username: username,
             description: description,
             link: link,
             votesFor: 0,
