@@ -10,7 +10,7 @@ async function main() {
 
   const contractName = "DAO";
   
-  const nftContractAddress: string = "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e";
+  const nftContractAddress: string = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const minProposalCreationTokens: number = 10;
   const minVotesToApprove: number = 10;
   const minTokensToApprove: number = 50;
