@@ -27,6 +27,12 @@ const config: HardhatUserConfig = {
       type: "edr-simulated",
       chainId: 31337,
     },
+    sepolia: {
+      type: "http",
+      chainId: 11155111,
+      url: "https://gateway.tenderly.co/public/sepolia",
+      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+    },
     polkadotHubTestnet: {
       type: "http",
       chainId: 420420422,
