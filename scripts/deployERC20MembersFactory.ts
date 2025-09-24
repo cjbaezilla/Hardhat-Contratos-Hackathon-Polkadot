@@ -16,8 +16,8 @@ async function main() {
 
   // Direcciones de los contratos dependientes
   // NOTA: Estas direcciones deben ser actualizadas con las direcciones reales de los contratos desplegados
-  const USER_MANAGER_ADDRESS = process.env.USER_MANAGER_ADDRESS || "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690";
-  const NFT_CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS || "0x67d269191c92Caf3cD7723F116c85e6E9bf55933";
+  const USER_MANAGER_ADDRESS = process.env.USER_MANAGER_ADDRESS || "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+  const NFT_CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
   console.log("🔗 Direcciones de dependencias:");
   console.log("   - SimpleUserManager:", USER_MANAGER_ADDRESS);
