@@ -33,6 +33,7 @@ contract DAOTest is Test {
     uint256 constant MINT_PRICE = 1 ether;
     
     // Parámetros del DAO
+    string constant DAO_NAME = "Test DAO";
     uint256 constant MIN_PROPOSAL_CREATION_TOKENS = 10;
     uint256 constant MIN_VOTES_TO_APPROVE = 10;
     uint256 constant MIN_TOKENS_TO_APPROVE = 50;
@@ -76,7 +77,7 @@ contract DAOTest is Test {
         nft = new SimpleNFT(NAME, SYMBOL, BASE_URI);
         
         // Desplegar contrato DAO
-        dao = new DAO(address(nft));
+        dao = new DAO(DAO_NAME, address(nft), MIN_PROPOSAL_CREATION_TOKENS, MIN_VOTES_TO_APPROVE, MIN_TOKENS_TO_APPROVE);
         
         // Configurar usuarios con NFTs para las pruebas
         setupTestUsers();
@@ -98,7 +99,7 @@ contract DAOTest is Test {
      */
     function createTestProposal(address proposer, uint256 startTime, uint256 endTime) internal returns (uint256) {
         vm.prank(proposer);
-        dao.createProposal("testuser", "Test proposal", "https://example.com", startTime, endTime);
+        dao.createProposal("Test proposal", "https://example.com", startTime, endTime);
         return dao.proposalCount() - 1;
     }
     
@@ -143,6 +144,10 @@ contract DAOTest is Test {
 
     // ============ PRUEBAS DEL CONSTRUCTOR ============
     
+    function test_Constructor_SetsName() public view {
+        assertEq(dao.name(), DAO_NAME);
+    }
+    
     function test_Constructor_SetsNFTContract() public view {
         assertEq(address(dao.nftContract()), address(nft));
     }
@@ -164,19 +169,17 @@ contract DAOTest is Test {
     // ============ PRUEBAS DE CREACIÓN DE PROPUESTAS ============
     
     function test_CreateProposal_Success() public {
-        string memory username = "testuser";
         string memory description = "Propuesta de prueba";
         string memory link = "https://example.com";
         uint256 startTime = block.timestamp + 60;
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal(username, description, link, startTime, endTime);
+        dao.createProposal(description, link, startTime, endTime);
         
         DAO.Proposal memory proposal = dao.getProposal(0);
         assertEq(proposal.id, 0);
         assertEq(proposal.proposer, user1);
-        assertEq(proposal.username, username);
         assertEq(proposal.description, description);
         assertEq(proposal.link, link);
         assertEq(proposal.votesFor, 0);
@@ -193,11 +196,11 @@ contract DAOTest is Test {
         assertEq(dao.proposalCount(), 0);
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         assertEq(dao.proposalCount(), 1);
         
         vm.prank(user4);
-        dao.createProposal("user2", "desc2", "link2", startTime, endTime);
+        dao.createProposal("desc2", "link2", startTime, endTime);
         assertEq(dao.proposalCount(), 2);
     }
     
@@ -207,7 +210,7 @@ contract DAOTest is Test {
         
         vm.prank(user2); // Solo tiene 5 NFTs
         vm.expectRevert("Necesitas al menos 10 NFTs para crear propuesta");
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
     }
     
     function test_CreateProposal_RevertsStartTimeInPast() public {
@@ -216,7 +219,7 @@ contract DAOTest is Test {
         
         vm.prank(user1);
         vm.expectRevert("startTime debe ser en el futuro");
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
     }
     
     function test_CreateProposal_RevertsEndTimeNotGreater() public {
@@ -225,7 +228,7 @@ contract DAOTest is Test {
         
         vm.prank(user1);
         vm.expectRevert("endTime debe ser mayor que startTime");
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
     }
     
     function test_CreateProposal_RevertsCooldownNotMet() public {
@@ -234,12 +237,12 @@ contract DAOTest is Test {
         
         // Crear primera propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Intentar crear segunda propuesta inmediatamente
         vm.prank(user1);
         vm.expectRevert("Solo puedes crear una propuesta cada 24 horas");
-        dao.createProposal("user2", "desc2", "link2", startTime + 120, endTime + 120);
+        dao.createProposal("desc2", "link2", startTime + 120, endTime + 120);
     }
     
     function test_CreateProposal_AllowsAfterCooldown() public {
@@ -248,14 +251,14 @@ contract DAOTest is Test {
         
         // Crear primera propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo 25 horas
         vm.warp(block.timestamp + 25 hours);
         
         // Crear segunda propuesta
         vm.prank(user1);
-        dao.createProposal("user2", "desc2", "link2", block.timestamp + 60, block.timestamp + 3660);
+        dao.createProposal("desc2", "link2", block.timestamp + 60, block.timestamp + 3660);
         
         assertEq(dao.proposalCount(), 2);
     }
@@ -268,7 +271,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo para que comience la votación
         vm.warp(startTime + 1);
@@ -293,7 +296,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo para que comience la votación
         vm.warp(startTime + 1);
@@ -316,7 +319,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo para que comience la votación
         vm.warp(startTime + 1);
@@ -348,7 +351,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Intentar votar antes del inicio
         vm.prank(user2);
@@ -362,7 +365,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo después del final
         vm.warp(endTime + 1);
@@ -378,7 +381,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Cancelar propuesta
         vm.prank(user1);
@@ -398,7 +401,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo para que comience la votación
         vm.warp(startTime + 1);
@@ -419,7 +422,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo para que comience la votación
         vm.warp(startTime + 1);
@@ -438,7 +441,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.expectEmit(true, false, false, false);
         emit ProposalCancelled(0);
@@ -462,7 +465,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // User2 intenta cancelar
         vm.prank(user2);
@@ -476,7 +479,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Cancelar primera vez
         vm.prank(user1);
@@ -494,7 +497,7 @@ contract DAOTest is Test {
         
         // Crear propuesta
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         // Avanzar tiempo después del final
         vm.warp(endTime + 1);
@@ -521,11 +524,11 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         assertEq(dao.getTotalProposals(), 1);
         
         vm.prank(user4);
-        dao.createProposal("user2", "desc2", "link2", startTime, endTime);
+        dao.createProposal("desc2", "link2", startTime, endTime);
         assertEq(dao.getTotalProposals(), 2);
     }
     
@@ -538,7 +541,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         assertEq(dao.getProposalStatus(0), "Pendiente");
     }
@@ -548,7 +551,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         assertEq(dao.getProposalStatus(0), "Votando");
@@ -559,7 +562,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.prank(user1);
         dao.cancelProposal(0);
@@ -572,7 +575,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         
@@ -611,7 +614,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         
@@ -630,7 +633,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         
@@ -650,7 +653,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         
@@ -762,7 +765,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", longDescription, "link", startTime, endTime);
+        dao.createProposal(longDescription, "link", startTime, endTime);
         
         DAO.Proposal memory proposal = dao.getProposal(0);
         assertEq(proposal.description, longDescription);
@@ -780,7 +783,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         
@@ -799,7 +802,7 @@ contract DAOTest is Test {
             uint256 endTime = startTime + 3600;
             
             vm.prank(user1);
-            dao.createProposal("user", "desc", "link", startTime, endTime);
+            dao.createProposal("desc", "link", startTime, endTime);
             vm.warp(block.timestamp + 25 hours); // Esperar cooldown
         }
         
@@ -814,7 +817,7 @@ contract DAOTest is Test {
         
         uint256 gasStart = gasleft();
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         uint256 gasUsed = gasStart - gasleft();
         
         console.log("Gas usado para crear propuesta:", gasUsed);
@@ -826,7 +829,7 @@ contract DAOTest is Test {
         uint256 endTime = startTime + 3600;
         
         vm.prank(user1);
-        dao.createProposal("user", "desc", "link", startTime, endTime);
+        dao.createProposal("desc", "link", startTime, endTime);
         
         vm.warp(startTime + 1);
         

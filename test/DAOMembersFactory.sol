@@ -119,6 +119,7 @@ contract DAOMembersFactoryTest is Test {
     event DAOCreated(
         address indexed daoAddress,
         address indexed creator,
+        string name,
         address indexed nftContract,
         uint256 minProposalCreationTokens,
         uint256 minVotesToApprove,
@@ -227,6 +228,7 @@ contract DAOMembersFactoryTest is Test {
         
         vm.prank(user1);
         address daoAddress = daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -257,6 +259,7 @@ contract DAOMembersFactoryTest is Test {
         vm.prank(user3);
         vm.expectRevert("DAOMembersFactory: User must be registered");
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -273,6 +276,7 @@ contract DAOMembersFactoryTest is Test {
         vm.expectRevert("DAOMembersFactory: User must have at least 5 NFTs");
         vm.prank(user2);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -289,6 +293,7 @@ contract DAOMembersFactoryTest is Test {
         vm.expectRevert("DAOMembersFactory: Insufficient fee paid");
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: 0.0005 ether}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -306,6 +311,7 @@ contract DAOMembersFactoryTest is Test {
         vm.expectRevert("DAOMembersFactory: Direccion del contrato NFT invalida");
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             address(0),
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -316,6 +322,7 @@ contract DAOMembersFactoryTest is Test {
         vm.expectRevert("DAOMembersFactory: Minimo de tokens para propuestas debe ser mayor a 0");
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             0,
             MIN_VOTES_TO_APPROVE,
@@ -326,6 +333,7 @@ contract DAOMembersFactoryTest is Test {
         vm.expectRevert("DAOMembersFactory: Minimo de votos para aprobar debe ser mayor a 0");
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             0,
@@ -336,6 +344,7 @@ contract DAOMembersFactoryTest is Test {
         vm.expectRevert("DAOMembersFactory: Minimo de tokens para aprobar debe ser mayor a 0");
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -352,6 +361,7 @@ contract DAOMembersFactoryTest is Test {
         
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -371,6 +381,7 @@ contract DAOMembersFactoryTest is Test {
         // Crear un DAO primero
         vm.prank(user1);
         address daoAddress = daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -546,6 +557,7 @@ contract DAOMembersFactoryTest is Test {
         // Crear primer DAO
         vm.prank(user1);
         address daoAddress1 = daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -561,6 +573,7 @@ contract DAOMembersFactoryTest is Test {
         // Crear segundo DAO
         vm.prank(user2);
         address daoAddress2 = daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS + 5,
             MIN_VOTES_TO_APPROVE + 2,
@@ -586,6 +599,7 @@ contract DAOMembersFactoryTest is Test {
         // Ahora user2 debería poder crear un DAO
         vm.prank(user2);
         address daoAddress = daoMembersFactory.deployDAO{value: DAO_CREATION_FEE}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -609,6 +623,7 @@ contract DAOMembersFactoryTest is Test {
         // Crear DAO con la nueva tarifa
         vm.prank(user1);
         address daoAddress = daoMembersFactory.deployDAO{value: newFee}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -629,6 +644,7 @@ contract DAOMembersFactoryTest is Test {
         // Enviar más ETH del necesario
         vm.prank(user1);
         daoMembersFactory.deployDAO{value: DAO_CREATION_FEE + 0.001 ether}(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,

@@ -10,6 +10,7 @@ async function main() {
 
   const contractName = "DAO";
   
+  const daoName: string = "Mi DAO Personalizado";
   const nftContractAddress: string = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const minProposalCreationTokens: number = 10;
   const minVotesToApprove: number = 10;
@@ -17,6 +18,7 @@ async function main() {
 
   console.log("\n⏳ Desplegando contrato DAO...");
   console.log("📋 Parámetros del contrato DAO:");
+  console.log("   - Nombre del DAO:", daoName);
   console.log("   - Contrato NFT:", nftContractAddress);
   console.log("   - Tokens mínimos para crear propuesta:", minProposalCreationTokens);
   console.log("   - Votos mínimos para aprobar:", minVotesToApprove);
@@ -24,6 +26,7 @@ async function main() {
 
   const DAOFactory = await ethers.getContractFactory(contractName);
   const dao = await DAOFactory.deploy(
+    daoName,
     nftContractAddress,
     minProposalCreationTokens,
     minVotesToApprove,
@@ -38,6 +41,7 @@ async function main() {
   console.log("🔗 Explorer (Polkadot Hub Testnet):", `https://polkadot-hub-testnet.subscan.io/account/${daoAddress}`);
 
   console.log("\n📊 Información del contrato DAO desplegado:");
+  console.log("   - Nombre del DAO:", await dao.name());
   console.log("   - Propietario:", await dao.owner());
   console.log("   - Contrato NFT:", await dao.nftContract());
   console.log("   - Propuestas totales:", await dao.getTotalProposals());
@@ -52,6 +56,7 @@ async function main() {
     network: "polkadotHubTestnet",
     timestamp: new Date().toISOString(),
     constructorArgs: {
+      name: daoName,
       nftContract: nftContractAddress,
       minProposalCreationTokens: minProposalCreationTokens,
       minVotesToApprove: minVotesToApprove,

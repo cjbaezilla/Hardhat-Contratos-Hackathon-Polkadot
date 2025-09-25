@@ -115,6 +115,7 @@ describe("DAOMembersFactory", function () {
       const nftAddress = await nftContract.getAddress();
       
       const tx = await daoMembersFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -145,6 +146,7 @@ describe("DAOMembersFactory", function () {
       
       await expect(
         daoMembersFactory.connect(user3).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -159,6 +161,7 @@ describe("DAOMembersFactory", function () {
       
       await expect(
         daoMembersFactory.connect(user2).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -173,6 +176,7 @@ describe("DAOMembersFactory", function () {
       
       await expect(
         daoMembersFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -185,6 +189,7 @@ describe("DAOMembersFactory", function () {
     it("Debería fallar si se pasa address(0) para nftContract", async function () {
       await expect(
         daoMembersFactory.connect(user1).deployDAO(
+          "Test DAO",
           ethers.ZeroAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -199,6 +204,7 @@ describe("DAOMembersFactory", function () {
       
       await expect(
         daoMembersFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           0, // Valor inválido
           minVotesToApprove,
@@ -213,6 +219,7 @@ describe("DAOMembersFactory", function () {
       
       await expect(
         daoMembersFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           0, // Valor inválido
@@ -227,6 +234,7 @@ describe("DAOMembersFactory", function () {
       
       await expect(
         daoMembersFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -241,6 +249,7 @@ describe("DAOMembersFactory", function () {
       const ownerBalanceBefore = await ethers.provider.getBalance(owner.address);
       
       await daoMembersFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -256,6 +265,7 @@ describe("DAOMembersFactory", function () {
       const nftAddress = await nftContract.getAddress();
       
       await daoMembersFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -277,6 +287,7 @@ describe("DAOMembersFactory", function () {
       const nftAddress = await nftContract.getAddress();
       
       await daoMembersFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -424,6 +435,7 @@ describe("DAOMembersFactory", function () {
       
       // Crear primer DAO
       await daoMembersFactory.connect(user1).deployDAO(
+        "Test DAO 1",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -438,6 +450,7 @@ describe("DAOMembersFactory", function () {
 
       // Crear segundo DAO
       await daoMembersFactory.connect(user2).deployDAO(
+        "Test DAO 2",
         nftAddress,
         minProposalCreationTokens + 5,
         minVotesToApprove + 2,
@@ -458,6 +471,7 @@ describe("DAOMembersFactory", function () {
       
       // Ahora user2 debería poder crear un DAO
       await daoMembersFactory.connect(user2).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -477,6 +491,7 @@ describe("DAOMembersFactory", function () {
       
       // Crear DAO con la nueva tarifa
       await daoMembersFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,

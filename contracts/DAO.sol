@@ -32,6 +32,7 @@ contract DAO is Ownable {
         bool cancelled;
     }
 
+    string public name;
     IERC721 public nftContract;
     uint256 public proposalCount;
     uint256 public MIN_PROPOSAL_CREATION_TOKENS;
@@ -67,11 +68,13 @@ contract DAO is Ownable {
     event MinTokensToApproveUpdated(uint256 indexed oldValue, uint256 indexed newValue);
 
     constructor(
+        string memory _name,
         address _nftContract,
         uint256 _minProposalCreationTokens,
         uint256 _minVotesToApprove,
         uint256 _minTokensToApprove
     ) Ownable(msg.sender) {
+        name = _name;
         nftContract = IERC721(_nftContract);
         MIN_PROPOSAL_CREATION_TOKENS = _minProposalCreationTokens;
         MIN_VOTES_TO_APPROVE = _minVotesToApprove;

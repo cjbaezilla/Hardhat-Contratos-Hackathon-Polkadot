@@ -52,12 +52,15 @@ Cada propuesta contiene información completa sobre la iniciativa de gobernanza:
 #### Configuración del Sistema
 
 ```solidity
+string public name;
 IERC721 public nftContract;
 uint256 public proposalCount;
 uint256 public MIN_PROPOSAL_VOTES = 10;
 uint256 public MIN_VOTES_TO_APPROVE = 10;
 uint256 public MIN_TOKENS_TO_APPROVE = 50;
 ```
+
+**name**: Nombre del DAO para identificación y branding. Se establece durante la creación del contrato y no puede ser modificado posteriormente.
 
 **nftContract**: Referencia al contrato de NFTs que determina el poder de voto. Esta variable puede ser actualizada por el propietario para migrar a diferentes colecciones.
 
@@ -429,12 +432,20 @@ El contrato proporciona funciones de consulta completas que permiten a las aplic
 ### Parámetros del Constructor
 
 ```solidity
-constructor(address _nftContract) Ownable(msg.sender) {
+constructor(string memory _name, address _nftContract, uint256 _minProposalCreationTokens, uint256 _minVotesToApprove, uint256 _minTokensToApprove) Ownable(msg.sender) {
+    name = _name;
     nftContract = IERC721(_nftContract);
+    MIN_PROPOSAL_CREATION_TOKENS = _minProposalCreationTokens;
+    MIN_VOTES_TO_APPROVE = _minVotesToApprove;
+    MIN_TOKENS_TO_APPROVE = _minTokensToApprove;
 }
 ```
 
+- **name**: Nombre del DAO para identificación
 - **nftContract**: Dirección del contrato de NFTs que determinará el poder de voto
+- **minProposalCreationTokens**: Mínimo de NFTs requeridos para crear propuestas
+- **minVotesToApprove**: Mínimo de votantes únicos requeridos para aprobar
+- **minTokensToApprove**: Mínimo de poder de votación total requerido para aprobar
 
 ### Consideraciones de Despliegue
 

@@ -39,6 +39,7 @@ async function main() {
   console.log("\n📋 Para usar el DAOFactory:");
   console.log("1. Conecta el contrato DAOFactory a la dirección:", factoryAddress);
   console.log("2. Llama a deployDAO() con los parámetros necesarios:");
+  console.log("   - name: nombre del DAO");
   console.log("   - nftContract: dirección del contrato NFT");
   console.log("   - minProposalCreationTokens: mínimo NFTs para crear propuestas");
   console.log("   - minVotesToApprove: mínimo votantes únicos para aprobar");

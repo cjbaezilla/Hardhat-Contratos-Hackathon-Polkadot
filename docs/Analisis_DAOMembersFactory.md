@@ -40,17 +40,39 @@ Para crear un DAO, un usuario debe cumplir con varios requisitos:
 
 Al crear un DAO, el usuario debe especificar:
 
+- **Nombre del DAO**: Nombre identificativo para el DAO
 - **Contrato NFT**: La dirección del contrato NFT que se usará para la membresía
 - **Tokens Mínimos para Propuestas**: Cuántos tokens necesita un usuario para crear propuestas
 - **Votos Mínimos para Aprobar**: Número mínimo de votos requeridos para aprobar una propuesta
 - **Tokens Mínimos para Aprobar**: Cantidad mínima de tokens que debe tener un usuario para que su voto cuente
+
+### Función deployDAO
+
+```solidity
+function deployDAO(
+    string memory name,
+    address nftContractAddress,
+    uint256 minProposalCreationTokens,
+    uint256 minVotesToApprove,
+    uint256 minTokensToApprove
+) external payable returns (address daoAddress)
+```
+
+**Parámetros:**
+- `name`: Nombre identificativo para el DAO
+- `nftContractAddress`: Dirección del contrato NFT que se usará para la membresía
+- `minProposalCreationTokens`: Mínimo de tokens requeridos para crear propuestas
+- `minVotesToApprove`: Mínimo de votantes únicos requeridos para aprobar
+- `minTokensToApprove`: Mínimo de poder de votación total requerido para aprobar
+
+**Retorna:** La dirección del DAO recién creado
 
 ### Flujo de Creación
 
 1. El usuario llama a `deployDAO()` con los parámetros necesarios
 2. El contrato verifica todos los requisitos
 3. Se transfiere la tarifa al propietario del factory
-4. Se crea una nueva instancia del contrato `DAO`
+4. Se crea una nueva instancia del contrato `DAO` con el nombre especificado
 5. La propiedad del nuevo DAO se transfiere al usuario creador
 6. Se registra el DAO en el sistema y se emite un evento
 

@@ -91,6 +91,7 @@ async function main() {
   console.log("   - Tener al menos", minNFTsRequired.toString(), "NFTs en su wallet");
   console.log("   - Pagar la tarifa de creación:", ethers.formatEther(daoCreationFee), "ETH");
   console.log("3. Para crear un DAO, llama a deployDAO() con:");
+  console.log("   - name: nombre del DAO");
   console.log("   - nftContractAddress: dirección del contrato NFT a usar para el DAO");
   console.log("   - minProposalCreationTokens: mínimo de tokens para crear propuestas");
   console.log("   - minVotesToApprove: mínimo de votos para aprobar propuestas");

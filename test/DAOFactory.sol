@@ -45,6 +45,7 @@ contract DAOFactoryTest is Test {
     event DAOCreated(
         address indexed daoAddress,
         address indexed creator,
+        string name,
         address indexed nftContract,
         uint256 minProposalCreationTokens,
         uint256 minVotesToApprove,
@@ -89,9 +90,11 @@ contract DAOFactoryTest is Test {
     
     function test_DeployDAOSuccess() public {
         address nftAddress = address(nftContract);
+        string memory daoName = "Test DAO";
         
         vm.prank(user1);
         address daoAddress = daoFactory.deployDAO(
+            daoName,
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -107,6 +110,7 @@ contract DAOFactoryTest is Test {
         
         // Verificar que el DAO tiene la configuración correcta
         DAO dao = DAO(daoAddress);
+        assertEq(dao.name(), daoName);
         assertEq(dao.owner(), user1);
         assertEq(address(dao.nftContract()), nftAddress);
         assertEq(dao.MIN_PROPOSAL_CREATION_TOKENS(), MIN_PROPOSAL_CREATION_TOKENS);
@@ -119,15 +123,15 @@ contract DAOFactoryTest is Test {
         
         // User1 crea un DAO
         vm.prank(user1);
-        address dao1 = daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        address dao1 = daoFactory.deployDAO("DAO 1", nftAddress, 10, 5, 50);
         
         // User2 crea otro DAO
         vm.prank(user2);
-        address dao2 = daoFactory.deployDAO(nftAddress, 15, 7, 75);
+        address dao2 = daoFactory.deployDAO("DAO 2", nftAddress, 15, 7, 75);
         
         // User3 crea un tercer DAO
         vm.prank(user3);
-        address dao3 = daoFactory.deployDAO(nftAddress, 20, 10, 100);
+        address dao3 = daoFactory.deployDAO("DAO 3", nftAddress, 20, 10, 100);
         
         // Verificaciones
         assertEq(daoFactory.getTotalDAOs(), 3);
@@ -145,6 +149,7 @@ contract DAOFactoryTest is Test {
         vm.prank(user1);
         vm.expectRevert("Direccion del contrato NFT invalida");
         daoFactory.deployDAO(
+            "Test DAO",
             address(0),
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -157,7 +162,7 @@ contract DAOFactoryTest is Test {
         
         vm.prank(user1);
         vm.expectRevert("Minimo de tokens para propuestas debe ser mayor a 0");
-        daoFactory.deployDAO(nftAddress, 0, MIN_VOTES_TO_APPROVE, MIN_TOKENS_TO_APPROVE);
+        daoFactory.deployDAO("Test DAO", nftAddress, 0, MIN_VOTES_TO_APPROVE, MIN_TOKENS_TO_APPROVE);
     }
     
     function test_DeployDAOInvalidMinVotes() public {
@@ -165,7 +170,7 @@ contract DAOFactoryTest is Test {
         
         vm.prank(user1);
         vm.expectRevert("Minimo de votos para aprobar debe ser mayor a 0");
-        daoFactory.deployDAO(nftAddress, MIN_PROPOSAL_CREATION_TOKENS, 0, MIN_TOKENS_TO_APPROVE);
+        daoFactory.deployDAO("Test DAO", nftAddress, MIN_PROPOSAL_CREATION_TOKENS, 0, MIN_TOKENS_TO_APPROVE);
     }
     
     function test_DeployDAOInvalidMinTokensToApprove() public {
@@ -173,7 +178,7 @@ contract DAOFactoryTest is Test {
         
         vm.prank(user1);
         vm.expectRevert("Minimo de tokens para aprobar debe ser mayor a 0");
-        daoFactory.deployDAO(nftAddress, MIN_PROPOSAL_CREATION_TOKENS, MIN_VOTES_TO_APPROVE, 0);
+        daoFactory.deployDAO("Test DAO", nftAddress, MIN_PROPOSAL_CREATION_TOKENS, MIN_VOTES_TO_APPROVE, 0);
     }
     
     // ============ PRUEBAS DE FUNCIONES DE CONSULTA ============
@@ -184,11 +189,11 @@ contract DAOFactoryTest is Test {
         assertEq(daoFactory.getTotalDAOs(), 0);
         
         vm.prank(user1);
-        daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        daoFactory.deployDAO("DAO 1", nftAddress, 10, 5, 50);
         assertEq(daoFactory.getTotalDAOs(), 1);
         
         vm.prank(user2);
-        daoFactory.deployDAO(nftAddress, 15, 7, 75);
+        daoFactory.deployDAO("DAO 2", nftAddress, 15, 7, 75);
         assertEq(daoFactory.getTotalDAOs(), 2);
     }
     
@@ -196,10 +201,10 @@ contract DAOFactoryTest is Test {
         address nftAddress = address(nftContract);
         
         vm.prank(user1);
-        address dao1 = daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        address dao1 = daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         vm.prank(user2);
-        address dao2 = daoFactory.deployDAO(nftAddress, 15, 7, 75);
+        address dao2 = daoFactory.deployDAO("Test DAO", nftAddress, 15, 7, 75);
         
         assertEq(daoFactory.getDAOByIndex(0), dao1);
         assertEq(daoFactory.getDAOByIndex(1), dao2);
@@ -211,7 +216,7 @@ contract DAOFactoryTest is Test {
         
         address nftAddress = address(nftContract);
         vm.prank(user1);
-        daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         vm.expectRevert("Indice fuera de rango");
         daoFactory.getDAOByIndex(1);
@@ -226,10 +231,10 @@ contract DAOFactoryTest is Test {
         
         // Con DAOs
         vm.prank(user1);
-        address dao1 = daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        address dao1 = daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         vm.prank(user2);
-        address dao2 = daoFactory.deployDAO(nftAddress, 15, 7, 75);
+        address dao2 = daoFactory.deployDAO("Test DAO", nftAddress, 15, 7, 75);
         
         address[] memory allDAOs = daoFactory.getAllDAOs();
         assertEq(allDAOs.length, 2);
@@ -241,10 +246,10 @@ contract DAOFactoryTest is Test {
         address nftAddress = address(nftContract);
         
         vm.prank(user1);
-        address dao1 = daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        address dao1 = daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         vm.prank(user2);
-        address dao2 = daoFactory.deployDAO(nftAddress, 15, 7, 75);
+        address dao2 = daoFactory.deployDAO("Test DAO", nftAddress, 15, 7, 75);
         
         assertEq(daoFactory.getDAOCreator(dao1), user1);
         assertEq(daoFactory.getDAOCreator(dao2), user2);
@@ -263,7 +268,7 @@ contract DAOFactoryTest is Test {
         
         // Crear un DAO
         vm.prank(user1);
-        address dao1 = daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        address dao1 = daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         // Verificar que es un DAO válido
         assertTrue(daoFactory.isDAO(dao1));
@@ -280,10 +285,10 @@ contract DAOFactoryTest is Test {
         
         // Con DAOs
         vm.prank(user1);
-        daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         vm.prank(user2);
-        daoFactory.deployDAO(nftAddress, 15, 7, 75);
+        daoFactory.deployDAO("Test DAO", nftAddress, 15, 7, 75);
         
         (totalDAOs, factoryOwner) = daoFactory.getFactoryStats();
         assertEq(totalDAOs, 2);
@@ -324,6 +329,7 @@ contract DAOFactoryTest is Test {
         // Crear un DAO
         vm.prank(user1);
         address daoAddress = daoFactory.deployDAO(
+            "Test DAO",
             nftAddress,
             MIN_PROPOSAL_CREATION_TOKENS,
             MIN_VOTES_TO_APPROVE,
@@ -351,10 +357,10 @@ contract DAOFactoryTest is Test {
         
         // Crear múltiples DAOs con diferentes configuraciones
         vm.prank(user1);
-        address dao1 = daoFactory.deployDAO(nftAddress, 10, 5, 50);
+        address dao1 = daoFactory.deployDAO("Test DAO", nftAddress, 10, 5, 50);
         
         vm.prank(user2);
-        address dao2 = daoFactory.deployDAO(nftAddress, 20, 10, 100);
+        address dao2 = daoFactory.deployDAO("Test DAO", nftAddress, 20, 10, 100);
         
         DAO dao1Instance = DAO(dao1);
         DAO dao2Instance = DAO(dao2);
@@ -381,6 +387,7 @@ contract DAOFactoryTest is Test {
         
         vm.prank(user1);
         address daoAddress = daoFactory.deployDAO(
+            "Test DAO",
             nftAddress,
             maxValue,
             maxValue,
@@ -398,7 +405,7 @@ contract DAOFactoryTest is Test {
         
         // Probar con valores mínimos válidos
         vm.prank(user1);
-        address daoAddress = daoFactory.deployDAO(nftAddress, 1, 1, 1);
+        address daoAddress = daoFactory.deployDAO("Test DAO", nftAddress, 1, 1, 1);
         
         DAO dao = DAO(daoAddress);
         assertEq(dao.MIN_PROPOSAL_CREATION_TOKENS(), 1);
@@ -415,7 +422,7 @@ contract DAOFactoryTest is Test {
         for (uint256 i = 0; i < numDAOs; i++) {
             address user = makeAddr(string(abi.encodePacked("user", i)));
             vm.prank(user);
-            daoFactory.deployDAO(nftAddress, 10 + i, 5 + i, 50 + i);
+            daoFactory.deployDAO("Test DAO", nftAddress, 10 + i, 5 + i, 50 + i);
         }
         
         assertEq(daoFactory.getTotalDAOs(), numDAOs);

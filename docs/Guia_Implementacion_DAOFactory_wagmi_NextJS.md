@@ -27,6 +27,7 @@ El contrato `DAOFactory` permite:
 ### Parámetros para Crear un DAO
 ```solidity
 function deployDAO(
+    string memory name,            // Nombre del DAO
     address nftContract,           // Dirección del contrato NFT
     uint256 minProposalCreationTokens,  // Mínimo NFTs para crear propuestas
     uint256 minVotesToApprove,     // Mínimo votantes únicos para aprobar
@@ -206,6 +207,7 @@ export const DAO_ABI = [
   // ABI del contrato DAO (simplificado)
   {
     "inputs": [
+      {"internalType": "string", "name": "_name", "type": "string"},
       {"internalType": "address", "name": "_nftContract", "type": "address"},
       {"internalType": "uint256", "name": "_minProposalCreationTokens", "type": "uint256"},
       {"internalType": "uint256", "name": "_minVotesToApprove", "type": "uint256"},
@@ -432,6 +434,7 @@ export function CreateDAOForm({ onSuccess }: CreateDAOFormProps) {
   const { createDAO, isPending, isConfirming, isSuccess, error } = useDAOFactory();
   
   const [formData, setFormData] = useState({
+    name: '',
     nftContract: '',
     minProposalCreationTokens: '',
     minVotesToApprove: '',
@@ -448,6 +451,7 @@ export function CreateDAOForm({ onSuccess }: CreateDAOFormProps) {
 
     try {
       await createDAO(
+        formData.name,
         formData.nftContract as `0x${string}`,
         BigInt(formData.minProposalCreationTokens),
         BigInt(formData.minVotesToApprove),
@@ -476,6 +480,23 @@ export function CreateDAOForm({ onSuccess }: CreateDAOFormProps) {
       </h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Nombre del DAO
+          </label>
+          <Input
+            type="text"
+            placeholder="Mi DAO Personalizado"
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
+            required
+            className="w-full"
+          />
+          <p className="text-sm text-gray-500 mt-1">
+            Nombre identificativo para tu DAO
+          </p>
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-2">
             Dirección del Contrato NFT

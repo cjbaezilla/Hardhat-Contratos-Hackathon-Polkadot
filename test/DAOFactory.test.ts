@@ -49,6 +49,7 @@ describe("DAOFactory", function () {
       const nftAddress = await nftContract.getAddress();
       
       const tx = await daoFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -60,6 +61,7 @@ describe("DAOFactory", function () {
         .withArgs(
           await daoFactory.deployedDAOs(0),
           user1.address,
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -84,6 +86,7 @@ describe("DAOFactory", function () {
       const nftAddress = await nftContract.getAddress();
       
       await daoFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -103,6 +106,7 @@ describe("DAOFactory", function () {
 
       // User1 crea un DAO
       await daoFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,
@@ -111,6 +115,7 @@ describe("DAOFactory", function () {
 
       // User2 crea otro DAO
       await daoFactory.connect(user2).deployDAO(
+        "Test DAO 2",
         nftAddress,
         minProposalCreationTokens + 1,
         minVotesToApprove + 1,
@@ -119,6 +124,7 @@ describe("DAOFactory", function () {
 
       // User3 crea un tercer DAO
       await daoFactory.connect(user3).deployDAO(
+        "Test DAO 3",
         nftAddress,
         minProposalCreationTokens + 2,
         minVotesToApprove + 2,
@@ -144,6 +150,7 @@ describe("DAOFactory", function () {
       // Dirección cero para NFT
       await expect(
         daoFactory.connect(user1).deployDAO(
+          "Test DAO",
           ethers.ZeroAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -154,6 +161,7 @@ describe("DAOFactory", function () {
       // Mínimo de tokens para propuestas = 0
       await expect(
         daoFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           0,
           minVotesToApprove,
@@ -164,6 +172,7 @@ describe("DAOFactory", function () {
       // Mínimo de votos para aprobar = 0
       await expect(
         daoFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           0,
@@ -174,6 +183,7 @@ describe("DAOFactory", function () {
       // Mínimo de tokens para aprobar = 0
       await expect(
         daoFactory.connect(user1).deployDAO(
+          "Test DAO",
           nftAddress,
           minProposalCreationTokens,
           minVotesToApprove,
@@ -188,9 +198,9 @@ describe("DAOFactory", function () {
       const nftAddress = await nftContract.getAddress();
       
       // Crear algunos DAOs para las pruebas
-      await daoFactory.connect(user1).deployDAO(nftAddress, 10, 5, 50);
-      await daoFactory.connect(user2).deployDAO(nftAddress, 15, 7, 75);
-      await daoFactory.connect(user3).deployDAO(nftAddress, 20, 10, 100);
+      await daoFactory.connect(user1).deployDAO("DAO 1", nftAddress, 10, 5, 50);
+      await daoFactory.connect(user2).deployDAO("DAO 2", nftAddress, 15, 7, 75);
+      await daoFactory.connect(user3).deployDAO("DAO 3", nftAddress, 20, 10, 100);
     });
 
     it("Debería retornar el número total de DAOs correctamente", async function () {
@@ -280,6 +290,7 @@ describe("DAOFactory", function () {
       
       // Crear un DAO
       await daoFactory.connect(user1).deployDAO(
+        "Test DAO",
         nftAddress,
         minProposalCreationTokens,
         minVotesToApprove,

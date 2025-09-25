@@ -16,6 +16,7 @@ describe("DAO - TypeScript Tests", function () {
   const MINT_PRICE = 1000000000000000000n;
 
   // Parámetros del DAO
+  const DAO_NAME = "Test DAO";
   const MIN_PROPOSAL_CREATION_TOKENS = 10;
   const MIN_VOTES_TO_APPROVE = 10;
   const MIN_TOKENS_TO_APPROVE = 50;
@@ -31,7 +32,7 @@ describe("DAO - TypeScript Tests", function () {
     
     // Desplegar contrato DAO
     const DAOFactory = await ethers.getContractFactory("DAO");
-    dao = await DAOFactory.deploy(await nft.getAddress());
+    dao = await DAOFactory.deploy(DAO_NAME, await nft.getAddress(), MIN_PROPOSAL_CREATION_TOKENS, MIN_VOTES_TO_APPROVE, MIN_TOKENS_TO_APPROVE);
     await dao.waitForDeployment();
 
     // Configurar usuarios con NFTs para las pruebas
@@ -61,6 +62,10 @@ describe("DAO - TypeScript Tests", function () {
   }
 
   describe("Constructor y Configuración Inicial", function () {
+    it("Debería establecer el nombre del DAO correctamente", async function () {
+      expect(await dao.name()).to.equal(DAO_NAME);
+    });
+
     it("Debería establecer el contrato NFT correctamente", async function () {
       expect(await dao.nftContract()).to.equal(await nft.getAddress());
     });
@@ -82,7 +87,6 @@ describe("DAO - TypeScript Tests", function () {
 
   describe("Creación de Propuestas", function () {
     it("Debería permitir crear propuesta con suficientes NFTs", async function () {
-      const username = "testuser";
       const description = "Propuesta de prueba";
       const link = "https://example.com";
       const { ethers } = await network.connect();
@@ -90,14 +94,13 @@ describe("DAO - TypeScript Tests", function () {
       const startTime = currentTime + 60; // 1 minuto en el futuro
       const endTime = startTime + 3600; // 1 hora después
 
-      await expect(dao.connect(user1).createProposal(username, description, link, startTime, endTime))
+      await expect(dao.connect(user1).createProposal(description, link, startTime, endTime))
         .to.emit(dao, "ProposalCreated")
         .withArgs(0, user1.address, description, startTime, endTime);
 
       const proposal = await dao.getProposal(0);
       expect(proposal.id).to.equal(0);
       expect(proposal.proposer).to.equal(user1.address);
-      expect(proposal.username).to.equal(username);
       expect(proposal.description).to.equal(description);
       expect(proposal.link).to.equal(link);
       expect(proposal.votesFor).to.equal(0);
@@ -113,10 +116,10 @@ describe("DAO - TypeScript Tests", function () {
       const startTime = currentTime + 60;
       const endTime = startTime + 3600;
 
-      await dao.connect(user1).createProposal("user", "desc", "link", startTime, endTime);
+      await dao.connect(user1).createProposal("desc", "link", startTime, endTime);
       expect(await dao.proposalCount()).to.equal(1);
 
-      await dao.connect(user4).createProposal("user2", "desc2", "link2", startTime, endTime);
+      await dao.connect(user4).createProposal("desc2", "link2", startTime, endTime);
       expect(await dao.proposalCount()).to.equal(2);
     });
 
@@ -127,7 +130,7 @@ describe("DAO - TypeScript Tests", function () {
       const endTime = startTime + 3600;
 
       await expect(
-        dao.connect(user2).createProposal("user", "desc", "link", startTime, endTime)
+        dao.connect(user2).createProposal("desc", "link", startTime, endTime)
       ).to.be.revertedWith("Necesitas al menos 10 NFTs para crear propuesta");
     });
 
@@ -138,7 +141,7 @@ describe("DAO - TypeScript Tests", function () {
       const endTime = startTime + 3600;
 
       await expect(
-        dao.connect(user1).createProposal("user", "desc", "link", startTime, endTime)
+        dao.connect(user1).createProposal("desc", "link", startTime, endTime)
       ).to.be.revertedWith("startTime debe ser en el futuro");
     });
 
@@ -149,7 +152,7 @@ describe("DAO - TypeScript Tests", function () {
       const endTime = startTime;
 
       await expect(
-        dao.connect(user1).createProposal("user", "desc", "link", startTime, endTime)
+        dao.connect(user1).createProposal("desc", "link", startTime, endTime)
       ).to.be.revertedWith("endTime debe ser mayor que startTime");
     });
   });
@@ -170,15 +173,14 @@ describe("DAO - TypeScript Tests", function () {
       const startTime = currentTime + 60;
       const endTime = startTime + 3600;
       
-      await dao.connect(user1).createProposal("user", "desc", "link", startTime, endTime);
+      await dao.connect(user1).createProposal("desc", "link", startTime, endTime);
       expect(await dao.getTotalProposals()).to.equal(1);
 
-      await dao.connect(user4).createProposal("user2", "desc2", "link2", startTime, endTime);
+      await dao.connect(user4).createProposal("desc2", "link2", startTime, endTime);
       expect(await dao.getTotalProposals()).to.equal(2);
     });
 
     it("Debería retornar información completa de propuesta", async function () {
-      const username = "testuser";
       const description = "Propuesta de prueba";
       const link = "https://example.com";
       const { ethers } = await network.connect();
@@ -186,12 +188,11 @@ describe("DAO - TypeScript Tests", function () {
       const startTime = currentTime + 60;
       const endTime = startTime + 3600;
 
-      await dao.connect(user1).createProposal(username, description, link, startTime, endTime);
+      await dao.connect(user1).createProposal(description, link, startTime, endTime);
 
       const proposal = await dao.getProposal(0);
       expect(proposal.id).to.equal(0);
       expect(proposal.proposer).to.equal(user1.address);
-      expect(proposal.username).to.equal(username);
       expect(proposal.description).to.equal(description);
       expect(proposal.link).to.equal(link);
       expect(proposal.votesFor).to.equal(0);
@@ -213,7 +214,7 @@ describe("DAO - TypeScript Tests", function () {
       const startTime = currentTime + 3600;
       const endTime = startTime + 3600;
       
-      await dao.connect(user1).createProposal("user", "desc", "link", startTime, endTime);
+      await dao.connect(user1).createProposal("desc", "link", startTime, endTime);
 
       expect(await dao.getProposalStatus(0)).to.equal("Pendiente");
     });
@@ -328,7 +329,7 @@ describe("DAO - TypeScript Tests", function () {
       const startTime = currentTime + 60;
       const endTime = startTime + 3600;
       
-      const tx = await dao.connect(user1).createProposal("user", "desc", "link", startTime, endTime);
+      const tx = await dao.connect(user1).createProposal("desc", "link", startTime, endTime);
       const receipt = await tx.wait();
       
       console.log(`Gas usado para crear propuesta: ${receipt?.gasUsed.toString()}`);
@@ -345,7 +346,7 @@ describe("DAO - TypeScript Tests", function () {
       const endTime = startTime + 3600;
       
       await expect(
-        dao.connect(user1).createProposal("user", longDescription, "link", startTime, endTime)
+        dao.connect(user1).createProposal(longDescription, "link", startTime, endTime)
       ).to.not.be.revertedWith("Error");
       
       const proposal = await dao.getProposal(0);

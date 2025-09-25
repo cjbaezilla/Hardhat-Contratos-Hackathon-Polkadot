@@ -30,6 +30,7 @@ contract DAOFactory is Ownable {
     event DAOCreated(
         address indexed daoAddress,
         address indexed creator,
+        string name,
         address indexed nftContract,
         uint256 minProposalCreationTokens,
         uint256 minVotesToApprove,
@@ -44,17 +45,20 @@ contract DAOFactory is Ownable {
     constructor(address initialOwner) Ownable(initialOwner) {}
     
     function deployDAO(
+        string memory name,
         address nftContract,
         uint256 minProposalCreationTokens,
         uint256 minVotesToApprove,
         uint256 minTokensToApprove
     ) external returns (address daoAddress) {
+        require(bytes(name).length > 0, "El nombre del DAO no puede estar vacio");
         require(nftContract != address(0), "Direccion del contrato NFT invalida");
         require(minProposalCreationTokens > 0, "Minimo de tokens para propuestas debe ser mayor a 0");
         require(minVotesToApprove > 0, "Minimo de votos para aprobar debe ser mayor a 0");
         require(minTokensToApprove > 0, "Minimo de tokens para aprobar debe ser mayor a 0");
         
         DAO newDAO = new DAO(
+            name,
             nftContract,
             minProposalCreationTokens,
             minVotesToApprove,
@@ -72,6 +76,7 @@ contract DAOFactory is Ownable {
         emit DAOCreated(
             daoAddress,
             msg.sender,
+            name,
             nftContract,
             minProposalCreationTokens,
             minVotesToApprove,
